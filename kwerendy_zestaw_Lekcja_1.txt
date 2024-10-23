@@ -1,0 +1,101 @@
+mysql> create table postac(id_postaci INT PRIMARY KEY AUTO_INCREMENT,
+nazwa VARCHAR(40) NOT NULL,
+rodzaj ENUM('wiking', 'ptak', 'kobieta') NOT NULL,
+data_ur DATE NOT NULL,
+wiek INT UNSIGNED NOT NULL);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_dunala |
++------------------+
+| postac           |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) VALUES
+    -> ('Bjorn', 'Wiking', '1985-04-10', 39),
+    -> ('Drozd', 'Ptak', '2000-05-13', 50),
+    -> ('Tesciowa', 'Kobieta', '1975-11-12', 65);
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+
+mysql> UPDATE postac
+    -> SET wiek = 88
+    -> where nazwa = 'Tesciowa';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from postac;
++------------+----------+---------+------------+------+
+| id_postaci | nazwa    | rodzaj  | data_ur    | wiek |
++------------+----------+---------+------------+------+
+|          1 | Bjorn    | wiking  | 1985-04-10 |   39 |
+|          2 | Drozd    | ptak    | 2000-05-13 |   50 |
+|          3 | Tesciowa | kobieta | 1975-11-12 |   88 |
++------------+----------+---------+------------+------+
+3 rows in set (0.01 sec)
+
+
+mysql> CREATE TABLE walizka(id_walizki INT AUTO_INCREMENT PRIMARY KEY,
+    -> pojemnosc INT UNSIGNED NOT NULL,
+    -> kolor ENUM('rozowy', 'czerwony', 'teczowy', 'zolty') NOT NULL,
+    -> id_wlasciciela INT,
+    -> FOREIGN KEY (id_wlasciciela) REFERENCES postac(id_postaci) ON DELETE CASCADE);
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> ALTER TABLE walizka MODIFY kolor ENUM('rozowy', 'czerwony', 'teczowy', 'zolty') NOT NULL DEFAULT 'rozowy';
+Query OK, 0 rows affected (0.13 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+
+mysql> INSERT INTO walizka (pojemnosc, kolor, id_wlasciciela) VALUES
+    -> (25, 'Rozowy', 1),
+    -> (50, 'Czerwony', 3);
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE Izba (
+    ->     adres_budynku VARCHAR(100),
+    ->     nazwa_izby VARCHAR(100),
+    ->     metraz INT UNSIGNED NOT NULL,
+    ->     wlasciciel INT NOT NULL,
+    ->     PRIMARY KEY (adres_budynku, nazwa_izby),
+    ->     FOREIGN KEY (wlasciciel) REFERENCES postac(id_postaci) ON DELETE CASCADE);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> ALTER TABLE Izba ADD COLUMN kolor VARCHAR(50) DEFAULT  'czarny' AFTER metraz;
+Query OK, 0 rows affected (0.10 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc izba;
+ERROR 1146 (42S02): Table 'dunala.izba' doesn't exist
+mysql> desc Izba;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| adres_budynku | varchar(100) | NO   | PRI | NULL    |       |
+| nazwa_izby    | varchar(100) | NO   | PRI | NULL    |       |
+| metraz        | int unsigned | NO   |     | NULL    |       |
+| kolor         | varchar(50)  | YES  |     | czarny  |       |
+| wlasciciel    | int          | NO   | MUL | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO Izba (adres_budynku, nazwa_izby, metraz, kolor, wlasciciel) VALUES
+    -> ('ul. Piekna 1', 'Spizarnia', 25,
+    -> 'czarny', 1);
+Query OK, 1 row affected (0.00 sec)
+
+
+CREATE TABLE przetwory (
+    id_przetwory INT AUTO_INCREMENT PRIMARY KEY,
+    rok_produkcji SMALLINT DEFAULT 1654,
+    id_wykonawcy INT,
+    zawartosc VARCHAR(255),
+    dodatek VARCHAR(255) DEFAULT 'papryczka chilli',
+    id_konsumenta INT,
+    FOREIGN KEY (id_wykonawcy) REFERENCES postac(id_postaci) ON DELETE CASCADE,
+    FOREIGN KEY (id_konsumenta) REFERENCES postac(id_postaci) ON DELETE CASCADE);
