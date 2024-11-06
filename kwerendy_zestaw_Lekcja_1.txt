@@ -99,3 +99,50 @@ CREATE TABLE przetwory (
     id_konsumenta INT,
     FOREIGN KEY (id_wykonawcy) REFERENCES postac(id_postaci) ON DELETE CASCADE,
     FOREIGN KEY (id_konsumenta) REFERENCES postac(id_postaci) ON DELETE CASCADE);
+
+mysql> INSERT INTO przetwory (zawartosc, dodatek) VALUES ('bigos', 'papryczka ch                                     illi');
+
+mysql> INSERT INTO postac (nazwa, rodzaj, data_ur, wiek) VALUES ('Marcin', 'Wiking', '1803-01-15', 153), ('Tomek', 'Wiking', '1832-02-11', 130), ('Adrian', 'Wiking', '1899-04-21', 80), ('Marek', 'Wiking', '1855-06-27', 60), ('Roman', 'Wiking', '1789-07-19', 75);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+
+CREATE TABLE statek (nazwa_statku VARCHAR(50) PRIMARY KEY,
+rodzaj_statku ENUM ('Kontenerowiec', 'Zaglowiec', 'Motorowka', 'Badawczy'),
+data_wodowania DATE,
+max_ladownosc FLOAT UNSIGNED);
+
+INSERT INTO statek (nazwa_statku, rodzaj_statku, data_wodowania, max_ladownosc) VALUES 
+('Piracik', 'Motorowka', '1922-12-20', 15),
+('WielkiBu', 'Kontenerowiec', '1999-05-17', 10000); 
+
+mysql> ALTER TABLE postac ADD COLUMN funkcja VARCHAR(999);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE postac SET funkcja = 'kapitan' WHERE nazwa = 'Bjorn';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> ALTER TABLE postac ADD FOREIGN KEY (id_statku) REFERENCES statek(nazwa_statku);
+Query OK, 8 rows affected (0.27 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> update postac set id_statku = 'Piracik' where nazwa IN ('Tomek', 'Marek', 'Roman');
+Query OK, 3 rows affected (0.01 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+
+mysql> update postac set id_statku = 'WielkiBu' where nazwa IN ('Bjorn', 'Marcin', 'Adrian');
+Query OK, 3 rows affected (0.00 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> delete from Izba where nazwa_izby='spizarnia';
+
+mysql> drop table Izba;
+Query OK, 0 rows affected (0.01 sec)
+
+
+
+
+
