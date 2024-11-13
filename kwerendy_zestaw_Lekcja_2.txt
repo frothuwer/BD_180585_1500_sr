@@ -1,0 +1,70 @@
+Zadanie 1)
+a) DELETE FROM postac WHERE rodzaj = 'wiking' AND nazwa != 'Bjorn' ORDER BY wiek DESC LIMIT 2;
+
+b)  mysql> ALTER TABLE postac MODIFY id_postaci int NOT NULL;
+ERROR 1833 (HY000): Cannot change column 'id_postaci': used in a foreign key constraint 'przetwory_ibfk_2' of table 'dunala.przetwory'
+mysql> ALTER TABLE przetwory DROP FOREIGN KEY przetwory_ibfk_2;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE postac MODIFY id_postaci int NOT NULL;
+Query OK, 6 rows affected (0.10 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE postac DROP PRIMARY KEY;
+Query OK, 6 rows affected (0.07 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+Zadanie 2)
+a) UPDATE postac SET pesel = '00000000000' WHERE pesel = '';
+ALTER TABLE postac ADD PRIMARY KEY(pesel);
+
+b) ALTER TABLE postac MODIFY COLUMN rodzaj ENUM('wiking','ptak','kobieta','syrena');
+
+c) INSERT INTO postac (id_postaci, nazwa, rodzaj, data_ur, wiek, funkcja, id_statku, pesel)
+VALUES (4, 'Gertruda Nieszczera', 'syrena', '1995-06-30', 29, 'wojownik', 'Olimp', '98765432109');
+
+Zadanie 3)
+a) UPDATE postac SET id_statku = 'WielkiBu' WHERE nazwa LIKE '%a%';
+
+b) UPDATE statek SET max_ladownosc = max_ladownosc * 0.7 WHERE YEAR(data_wodowania) BETWEEN 1901 AND 2000;
+
+c) ALTER TABLE postac ADD CONSTRAINT chk_wiek CHECK (wiek <= 1000);
+
+Zadanie 4)
+a) INSERT INTO postac (id_postaci, nazwa, rodzaj, data_ur, wiek, funkcja, pesel)
+VALUES (5, 'Loko', 'syrena', '1999-02-21', 40, 'wonsz', '00000000006');
+
+b) CREATE TABLE Marynarz (
+id_postaci INT AUTO_INCREMENT PRIMARY KEY,
+nazwa VARCHAR(40),
+rodzaj ENUM ('wiking', 'ptak', 'kobieta', 'syrena'),
+data_ur DATE,
+wiek INT UNSIGNED,
+funkcja VARCHAR(60) DEFAULT NULL,
+id_statku VARCHAR(50) DEFAULT NULL,
+pesel VARCHAR(11),
+FOREIGN KEY (id_statku) REFERENCES statek(nazwa_statku));
+
+INSERT INTO marynarz (id_postaci, nazwa, rodzaj, data_ur, wiek, funkcja, id_statku, pesel)
+SELECT id_postaci, nazwa, rodzaj, data_ur, wiek, funkcja, id_statku, pesel FROM postac WHERE id_statku IS NOT NULL;
+
+Zadanie 5)
+a) DELETE from Marynarz;
+
+b) a) INSERT INTO Marynarz (id_postaci, nazwa, rodzaj, data_ur, wiek, funkcja, pesel)
+VALUES (1, 'Loko', 'syrena', '1999-02-21', 40, 'wonsz', '00000000006');
+
+c) DELETE FROM statek;
+
+d) ALTER TABLE Marynarz DROP FOREIGN KEY Marynarz_ibfk_1;
+DROP TABLE statek;
+
+e) CREATE TABLE zwierz (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nazwa VARCHAR(255) NOT NULL,
+    wiek INT NOT NULL);
+
+f) INSERT INTO zwierz (nazwa, wiek)
+SELECT nazwa, wiek 
+FROM postac WHERE rodzaj = 'syrena';
