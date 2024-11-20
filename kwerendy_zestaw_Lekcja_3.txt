@@ -36,7 +36,7 @@ select nazwa, SUM(ilosc * waga) as calkowita_waga from zasob where rodzaj is not
 
 Zadanie5)
 a)
-select nazwa, sum(waga * 0.7) AS waga_netto, sum(waga * 0.3) AS waga_odpadu from zasob WHERE rodzaj LIKE 'jedzenie%' group by nazwa;
+select nazwa, sum(waga * 0.7 * ilosc) AS waga_netto, sum(waga * 0.3 * ilosc) AS waga_odpadu from zasob WHERE rodzaj LIKE 'jedzenie%' group by nazwa;
 b)
 select * from zasob where rodzaj is null;
 c)
