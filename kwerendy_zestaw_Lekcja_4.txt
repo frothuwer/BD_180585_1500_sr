@@ -1,0 +1,15 @@
+Zadanie 1)
+1)
+SELECT AVG(waga) FROM kreatura WHERE rodzaj = 'wiking';
+2)
+SELECT rodzaj, TRUNCATE(AVG(waga), 1) as srednia_waga, COUNT(*) as liczba_kreatur FROM kreatura group by rodzaj;
+3)
+SELECT rodzaj, AVG(TIMESTAMPDIFF(YEAR, dataUr, CURDATE())) AS sredni_wiek FROM kreatura GROUP BY rodzaj;
+SELECT rodzaj, AVG(YEAR(CURDATE()) - YEAR(dataUr)) AS sredni_wiek FROM kreatura GROUP BY rodzaj;
+
+Zadanie 2)
+1)
+SELECT rodzaj, SUM(waga) AS suma_wag FROM zasob GROUP BY rodzaj;
+2)
+SELECT nazwa, (SUM(waga*ilosc))/(SUM(ilosc)) AS sredniawagaa FROM zasob GROUP BY nazwa HAVING SUM(waga*ilosc)>10 AND SUM(ilosc)>4;
+3)
