@@ -13,7 +13,7 @@ SELECT rodzaj, SUM(waga) AS suma_wag FROM zasob GROUP BY rodzaj;
 2)
 SELECT nazwa, (SUM(waga*ilosc))/(SUM(ilosc)) AS sredniawagaa FROM zasob GROUP BY nazwa HAVING SUM(waga*ilosc)>10 AND SUM(ilosc)>4;
 3)
-SELECT rodzaj, COUNT(DISTINCT nazwa) AS liczba_roznych_nazw FROM zasoby WHERE ilosc > 1 GROUP BY rodzaj;
+SELECT rodzaj, COUNT(DISTINCT nazwa) AS liczba_roznych_nazw FROM zasob WHERE ilosc > 1 GROUP BY rodzaj;
 
 Zadanie 3)
 1)
