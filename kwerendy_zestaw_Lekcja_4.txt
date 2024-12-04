@@ -13,3 +13,39 @@ SELECT rodzaj, SUM(waga) AS suma_wag FROM zasob GROUP BY rodzaj;
 2)
 SELECT nazwa, (SUM(waga*ilosc))/(SUM(ilosc)) AS sredniawagaa FROM zasob GROUP BY nazwa HAVING SUM(waga*ilosc)>10 AND SUM(ilosc)>4;
 3)
+SELECT rodzaj, COUNT(DISTINCT nazwa) AS liczba_roznych_nazw FROM zasoby WHERE ilosc > 1 GROUP BY rodzaj;
+
+Zadanie 3)
+1)
+SELECT kreatura.idKreatury, COUNT(ekwipunek.idKreatury) AS ile_niesie FROM kreatura INNER JOIN ekwipunek ON kreatura.idKreatury = ekwipunek.idKreatury GROUP BY kreatura.idKreatury;
+
+2)
+SELECT k.idKreatury, k.nazwa AS nazwa_kreatury, z.nazwa AS nazwa_zasobu FROM kreatura k JOIN ekwipunek e ON k.idKreatury = e.idKreatury JOIN zasob z ON e.idZasobu = z.idZasobu;
+
+3)
+SELECT kreatura.idKreatury, kreatura.nazwa as nazwa_kreatury FROM kreatura LEFT JOIN ekwipunek ON kreatura.idKreatury = ekwipunek.idKreatury WHERE ekwipunek.idEkwipunku IS NULL;
+
+Zadanie 4)
+1)
+SELECT kreatura.idKreatury, kreatura.nazwa as nazwa_kreatury, zasob.nazwa as nazwa_zasobu FROM kreatura NATURAL JOIN ekwipunek INNER JOIN zasob ON ekwipunek.idZasobu = zasob.idZasobu WHERE kreatura.dataUR BETWEEN '1670-01-01' AND '1679-12-31';
+
+2)
+SELECT kreatura.nazwa, kreatura.dataUR from kreatura JOIN ekwipunek ON kreatura.idKreatury = ekwipunek.idKreatury JOIN zasob ON ekwipunek.idZasobu = zasob.idZasobu WHERE zasob.rodzaj = 'jedzenie' ORDER BY kreatura.dataUR DESC LIMIT 5;
+
+3)
+SELECT k1.nazwa AS nazwa_kreatury_1, k2.nazwa AS nazwa_kreatury_2 FROM kreatura k1 JOIN kreatura k2 ON ABS(k1.idKreatury - k2.idKreatury) = 5;
+
+Zadanie 5)
+1)
+SELECT kreatura.rodzaj, AVG(zasob.waga) AS srednia_waga FROM kreatura JOIN ekwipunek ON kreatura.idKreatury = ekwipunek.idKreatury JOIN zasob ON ekwipunek.idZasobu = zasob.idZasobu WHERE kreatura.rodzaj NOT IN ('małpa', 'wąż') AND ekwipunek.ilosc < 30 GROUP BY kreatura.rodzaj;
+
+2)
+SELECT
+(SELECT k1.rodzaj FROM kreatura k1 WHERE k1.rodzaj = k.rodzaj ORDER BY k1.dataUr DESC LIMIT 1) AS najmlodsza_rodzaj,
+(SELECT k1.nazwa FROM kreatura k1 WHERE k1.rodzaj = k.rodzaj ORDER BY k1.dataUr DESC LIMIT 1) AS najmlodsza_nazwa,
+(SELECT k1.dataUr FROM kreatura k1 WHERE k1.rodzaj = k.rodzaj ORDER BY k1.dataUr DESC LIMIT 1) AS najmlodsza_dataUr,
+(SELECT k2.rodzaj FROM kreatura k2 WHERE k2.rodzaj = k.rodzaj ORDER BY k2.dataUr ASC LIMIT 1) AS najstarsza_rodzaj,
+(SELECT k2.nazwa FROM kreatura k2 WHERE k2.rodzaj = k.rodzaj ORDER BY k2.dataUr ASC LIMIT 1) AS najstarsza_nazwa,
+(SELECT k2.dataUr FROM kreatura k2 WHERE k2.rodzaj = k.rodzaj ORDER BY k2.dataUr ASC LIMIT 1) AS najstarsza_dataUr
+FROM kreatura k GROUP BY k.rodzaj;
+
