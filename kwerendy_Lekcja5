@@ -8,3 +8,28 @@ JOIN uczestnicy ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
 JOIN kreatura1 ON uczestnicy.id_uczestnika = kreatura1.idKreatury
 JOIN ekwipunek ON kreatura1.idKreatury = ekwipunek.idKreatury
 GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa;
+
+Zadanie2)
+1) dla kazdej wyprawy wypisz jej nazwe, liczbe uczestnikow oraz nazwy tych uczestnikow w jednej linii
+SELECT wyprawa.nazwa AS nazwa_wyprawy, COUNT(uczestnicy.id_uczestnika) AS liczba_uczestnikow, GROUP_CONCAT(kreatura1.nazwa ORDER BY kreatura1.nazwa SEPARATOR ', ') AS uczestnicy FROM wyprawa
+JOIN uczestnicy ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
+JOIN kreatura1 ON uczestnicy.id_uczestnika = kreatura1.idKreatury
+GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa;
+2) Wypisz kolejne etapy wszystkich wypraw wraz z nazwami sektorow, sortujac najpierw wedlug daty poczatku wyprawy, a nastepnie wedlug kolejnosci wystepowania etapow. W kazdym etapie okresl nazwe kierownika danej wyprawy
+SELECT wyprawa.nazwa AS nazwa_wyprawy, etapy_wyprawy AS kolejnosc_etapu, sektor.nazwa AS nazwa sektoru, kreatura1.nazwa AS kierownik FROM wyprawa
+JOIN etap_wyprawy ON wyprawa.id_wyprawy = etapy_wyprawy.idWyprawy
+JOIN sektor ON etapy_wyprawy.sektor = sektor.id_sektora
+JOIN kreatura1 ON wyprawa.kierownik = kreatura1.idKreatury
+ORDER BY wyprawa.data_rozpoczecia, etapy_wyprawy.kolejnosc;
+
+SELECT w.nazwa AS nazwa_wyprawy,
+       e.kolejnosc AS kolejnosc_etapu,
+       s.nazwa AS sektor,
+       k.nazwa AS kierownik
+FROM wyprawa w
+JOIN etapy_wyprawy e ON w.id_wyprawy = e.idWyprawy
+JOIN sektor s ON e.sektor = s.id_sektora
+JOIN kreatura1 k ON w.kierownik = k.idKreatury
+ORDER BY w.data_rozpoczecia, e.kolejnosc;
+
+
