@@ -1,0 +1,10 @@
+Zadanie1)
+2)
+SELECT nazwa from kreatura1 LEFT JOIN uczestnicy ON kreatura1.idKreatury = uczestnicy.id_uczestnika WHERE uczestnicy.id_uczestnika IS NULL;
+3)
+SELECT wyprawa.nazwa AS wyprawa, SUM(ekwipunek.ilosc) AS suma_ekwipunku
+FROM wyprawa
+JOIN uczestnicy ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
+JOIN kreatura1 ON uczestnicy.id_uczestnika = kreatura1.idKreatury
+JOIN ekwipunek ON kreatura1.idKreatury = ekwipunek.idKreatury
+GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa;
