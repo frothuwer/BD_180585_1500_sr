@@ -1,7 +1,7 @@
 Zadanie1)
-2)
+2) Wypisz nazwy kreatur ktore nie uczestniczyly w zadnej wyprawie
 SELECT nazwa from kreatura1 LEFT JOIN uczestnicy ON kreatura1.idKreatury = uczestnicy.id_uczestnika WHERE uczestnicy.id_uczestnika IS NULL;
-3)
+3) Dla kazdej wyprawy wypisac jej nazwe oraz sume ilosci ekwipunku, jaka zostala zabrana przez uczestnikow tej wyprawy
 SELECT wyprawa.nazwa AS wyprawa, SUM(ekwipunek.ilosc) AS suma_ekwipunku
 FROM wyprawa
 JOIN uczestnicy ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
@@ -10,26 +10,67 @@ JOIN ekwipunek ON kreatura1.idKreatury = ekwipunek.idKreatury
 GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa;
 
 Zadanie2)
+
 1) dla kazdej wyprawy wypisz jej nazwe, liczbe uczestnikow oraz nazwy tych uczestnikow w jednej linii
 SELECT wyprawa.nazwa AS nazwa_wyprawy, COUNT(uczestnicy.id_uczestnika) AS liczba_uczestnikow, GROUP_CONCAT(kreatura1.nazwa ORDER BY kreatura1.nazwa SEPARATOR ', ') AS uczestnicy FROM wyprawa
 JOIN uczestnicy ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
 JOIN kreatura1 ON uczestnicy.id_uczestnika = kreatura1.idKreatury
 GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa;
+
 2) Wypisz kolejne etapy wszystkich wypraw wraz z nazwami sektorow, sortujac najpierw wedlug daty poczatku wyprawy, a nastepnie wedlug kolejnosci wystepowania etapow. W kazdym etapie okresl nazwe kierownika danej wyprawy
-SELECT wyprawa.nazwa AS nazwa_wyprawy, etapy_wyprawy AS kolejnosc_etapu, sektor.nazwa AS nazwa sektoru, kreatura1.nazwa AS kierownik FROM wyprawa
-JOIN etap_wyprawy ON wyprawa.id_wyprawy = etapy_wyprawy.idWyprawy
+SELECT wyprawa.nazwa AS nazwa_wyprawy,  etapy_wyprawy.kolejnosc AS kolejnosc_etapu,  sektor.nazwa AS nazwa_sektoru,  kreatura1.nazwa AS kierownik FROM wyprawa
+JOIN etapy_wyprawy ON wyprawa.id_wyprawy = etapy_wyprawy.idWyprawy
 JOIN sektor ON etapy_wyprawy.sektor = sektor.id_sektora
 JOIN kreatura1 ON wyprawa.kierownik = kreatura1.idKreatury
 ORDER BY wyprawa.data_rozpoczecia, etapy_wyprawy.kolejnosc;
 
-SELECT w.nazwa AS nazwa_wyprawy,
-       e.kolejnosc AS kolejnosc_etapu,
-       s.nazwa AS sektor,
-       k.nazwa AS kierownik
-FROM wyprawa w
-JOIN etapy_wyprawy e ON w.id_wyprawy = e.idWyprawy
-JOIN sektor s ON e.sektor = s.id_sektora
-JOIN kreatura1 k ON w.kierownik = k.idKreatury
-ORDER BY w.data_rozpoczecia, e.kolejnosc;
+Zadanie3)
+
+1) Wypisac ile razy dany sektor byl odwiedzany podczas wszystkich wypraw (nazwa sektora, ilosc odwiedzin). Jesli nie byl odwiedzony ani razu wpisz zero
+
+SELECT sektor.nazwa as Sektor, IFNULL(COUNT(etapy_wyprawy.idEtapu), 0) AS ilosc_odwiedzin FROM sektor
+LEFT JOIN etapy_wyprawy ON sektor.id_sektora = etapy_wyprawy.sektor
+GROUP BY sektor.id_sektora, sektor.nazwa;
+
+2) W zależności od ilości wypraw, w jakich brała udział dana kreatura wypisz: Nazwa kreatury, 'bral udzial w wyprawie' - gdy liczba > 0, 'nie bral udzialu w wyprawie', gdy rowna zero
+
+SELECT kreatura1.nazwa, IF(COUNT(uczestnicy.id_wyprawy) > 0, 'bral udzial w wyprawie', 'nie bral udzialu w wyprawie') AS udzial FROM kreatura1
+LEFT JOIN uczestnicy ON kreatura1.idKreatury = uczestnicy.id_uczestnika
+GROUP BY kreatura1.idKreatury, kreatura1.nazwa;
+
+Zadanie4)
+
+1) Dla kazdej wyprawy wypisz jej nazwe oraz sume liczby znakow, ktore zostaly uzyte przy pisaniu dziennika, jesli ta liczba znakow jest mniejsza od 400
+
+SELECT wyprawa.nazwa, SUM(CHAR_LENGTH(etapy_wyprawy.dziennik)) AS suma_znakow FROM wyprawa
+JOIN etapy_wyprawy ON wyprawa.id_wyprawy = etapy_wyprawy.idWyprawy
+GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa HAVING suma_znakow < 400;
+
+2) Dla kazdej wyprawy podaj srednia wage zasobow jakie byly niesione przez uczestnikow tej wyprawy
+
+SELECT wyprawa.nazwa, AVG(zasob.waga * zasob.ilosc) / COUNT(DISTINCT uczestnicy.id_uczestnika) AS srednia_waga_zasobow FROM wyprawa
+JOIN uczestnicy ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
+JOIN ekwipunek ON uczestnicy.id_uczestnika = ekwipunek.idKreatury
+JOIN zasob ON ekwipunek.idZasobu = zasob.idZasobu
+GROUP BY wyprawa.id_wyprawy, wyprawa.nazwa;
+
+Zadanie5)
+
+1) Wypisać nazwę kreatury oraz ile miała dni (wiek w dniach) w momencie rozpoczęcia wyprawy, dla wypraw, ktore przechodzily przez chatkę dziadka
+
+SELECT kreatura1.nazwa, DATEDIFF(wyprawa.data_rozpoczecia, kreatura1.dataUr) AS wiek_w_dniach FROM kreatura1
+JOIN uczestnicy ON kreatura1.idKreatury = uczestnicy.id_uczestnika
+JOIN wyprawa ON wyprawa.id_wyprawy = uczestnicy.id_wyprawy
+JOIN etapy_wyprawy ON wyprawa.id_wyprawy = etapy_wyprawy.idWyprawy
+WHERE etapy_wyprawy.sektor = 7;
+
+
+
+
+
+
+
+
+
 
 
