@@ -40,20 +40,49 @@ SELECT CustomerName, ContactName, City
 FROM Customers
 WHERE Country = "Brazil";
 
+DELIMITER $$
 CREATE TRIGGER drugi1
-BEFORE DELETE ON kreatura1
+BEFORE DELETE ON kreatura
 FOR EACH ROW
 BEGIN 
-INSERT INTO archiwum wypraw (
-id_wypawy,
+INSERT INTO archiwum_wypraw (
+id_wyprawy,
 nazwa,
 data_rozpoczecia,
 data_zakonczenia,
 kierownik)
-VALEUS (
-OLD.id_wyprawy,
-OLD.nazwa,
-OLD.data_rozpoczecia,
-OLD.data_zakonczenia,
-(SELECT nazwa from kreatury where id_kreatury=OLD.id_kreatury));
+VALUES (
+wyprawa.id_wyprawy,
+wyprawa.nazwa,
+wyprawa.data_rozpoczecia,
+wyprawa.data_zakonczenia,
+(SELECT nazwa from kreatura where idKreatury = OLD.kierownik));
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER drugi1
+BEFORE DELETE ON kreatura
+FOR EACH ROW
+BEGIN 
+INSERT INTO archiwum_wypraw (
+id_wyprawy,
+nazwa,
+data_rozpoczecia,
+data_zakonczenia,
+kierownik)
+SELECT 
+wyprawa.id_wyprawy,
+wyprawa.nazwa,
+wyprawa.data_rozpoczecia,
+wyprawa.data_zakonczenia,
+wyprawa.nazwa 
+FROM wyprawa
+JOIN 
+kreatura ON kreatura.idKreatury = wyprawa.kierownik
+WHERE 
+kreatura.idKreatury = OLD.idKreatury;
+END $$
+DELIMITER ;
+
 
